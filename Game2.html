@@ -1,19 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+
+	<script  src="three.js-camerafit/build/three.min.js"></script>
+	
+   
+
+	<title>School</title>
 	<style>
+
 
 		body
 		{
             margin: 0;
 		}
+
+        #healthLabel 
+		{
+           position: fixed;
+		   z-index: 2;
+		   font-size: 5em;
+		   color: aqua;
+		}
+
+
 	</style>
 	<meta charset="utf-8">
 	<style type="text/css" id="operaUserStyle"></style>
 </head>
 <body>
-	<script src="three.js-dev/build/three.min.js"></script>
+    <div id = "healthLabel">Health: 100</div>
+
+	
+	
+	
+
+	
+
+
+	
+	
 	<script> 
+	
+	
       const scene  = new THREE.Scene();
 	  scene.background = new THREE.Color(0xFFA500);
 	  const renderer = new THREE.WebGLRenderer();
@@ -31,7 +61,12 @@
 	 })
 	 var characterMesh = new THREE.Mesh(characterGeometry,characterMaterial);
 	 scene.add(characterMesh);
+	 characterMesh.add(camera);
 	camera.position.z = 5;
+
+	
+
+
 
 
 	const floorGeometry = new THREE.PlaneGeometry(1000,1000,10,10);
@@ -46,6 +81,18 @@
 	floorMesh.rotation.x = Math.PI/2;
 	floorMesh.position.y =-5;
 	scene.add(floorMesh);
+
+
+    const obstacleGeometry = new THREE.BoxGeometry(2,2,2);
+	const obstacleMaterial = new THREE.MeshBasicMaterial
+	({
+      color : 0x8E1A1A
+
+	});
+
+    const obstacleMesh = new THREE.Mesh(obstacleGeometry,obstacleMaterial);
+	scene.add(obstacleMesh);
+    obstacleMesh.position.set(1,0,1);
 	
 
 	  const animate = function()
@@ -55,41 +102,62 @@
 		update();
 
 	  }
+      
+	   
+      //human
+	 
+
+    
+
+
+
+
+
+
+
+	  
 
 
 
 	  var keyboardEvent;
 	  var pressed  = false;
+     characterMesh.health = 100;
+	  var collidableObjects = [];
+	  collidableObjects.push(obstacleMesh);
       function update()
 	  {
+		// movement 
 		if(pressed) 
 		{
+
+			const moveDistance = 0.1;
 			if(keyboardEvent.keyCode===37)
 			{
-				characterMesh.position.x -=0.1;
+				characterMesh.position.x -= moveDistance;
 			}
 			else if(keyboardEvent.keyCode===39)
 			{
-				characterMesh.position.x +=0.1;
+				characterMesh.position.x += moveDistance;
 			}
 			else if(keyboardEvent.keyCode ===38)
 			{
-				characterMesh.position.z -= 0.1;
+				characterMesh.translateZ (-moveDistance);
 			}
 			else if(keyboardEvent.keyCode===40)
 			{
-				characterMesh.position.z += 0.1;
+				characterMesh.translateZ (moveDistance);
 			}
 			else if(keyboardEvent.keyCode ===32)
 			{
-				characterMesh.position.y += 0.1;
+				characterMesh.position.y += moveDistance;
 			}
 		}
-	  }
 
+		
+	}
+  
+      
 
-
-	 
 
 	  window.addEventListener("keydown", onkeyDown,false)
 	  window.addEventListener("keyup", onkeyup,false);
@@ -106,8 +174,22 @@
 		 keyboardEvent = event;
 
 	  }
+	  // handle window resize
+      window.addEventListener("resize",onWindowResize, false);
 
+	  function onWindowResize()
+	  {
+		 camera.aspect = window.innerWidth/window.innerHeight;
+		 camera.updateProjectionMatrix();
+
+		 renderer.setSize(window.innerWidth,window.innerHeight);
+	  }
 	  animate();
+
+
+
+
+
     </script>
 
 </body>
