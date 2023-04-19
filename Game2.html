@@ -4,7 +4,7 @@
 
 
 	<script  src="three.js-camerafit/build/three.min.js"></script>
-	
+	<script  src="three.js-camerafit/examples/jsm/loaders/GLTFLoader.js"></script>
    
 
 	<title>School</title>
@@ -44,6 +44,11 @@
 	<script> 
 	
 	
+
+
+
+
+	
       const scene  = new THREE.Scene();
 	  scene.background = new THREE.Color(0xFFA500);
 	  const renderer = new THREE.WebGLRenderer();
@@ -61,11 +66,37 @@
 	 })
 	 var characterMesh = new THREE.Mesh(characterGeometry,characterMaterial);
 	 scene.add(characterMesh);
-	 characterMesh.add(camera);
+	// characterMesh.add(camera);
 	camera.position.z = 5;
 
-	
+// Create a cylinder geometry with radius 1 and height 2
+const capsuleGeometry = new THREE.CylinderGeometry(1, 1, 2, 16);
 
+// Create a sphere geometry with radius 1
+const topCapGeometry = new THREE.SphereGeometry(1, 16, 16);
+const bottomCapGeometry = new THREE.SphereGeometry(1, 16, 16);
+
+// Move the top and bottom caps to the top and bottom of the cylinder
+topCapGeometry.translate(0, 1, 0);
+bottomCapGeometry.translate(0, -1, 0);
+
+// Merge the capsule geometry and the top and bottom caps
+const capsuleMergedGeometry = new THREE.Geometry();
+capsuleMergedGeometry.merge(capsuleGeometry);
+capsuleMergedGeometry.merge(topCapGeometry);
+capsuleMergedGeometry.merge(bottomCapGeometry);
+
+// Create a material for the capsule
+const capsuleMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+
+// Create a mesh with the capsule geometry and material
+const capsuleMesh = new THREE.Mesh(capsuleMergedGeometry, capsuleMaterial);
+
+// Add the capsule mesh to the scene
+scene.add(capsuleMesh);
+scene.remove(characterMesh);
+characterMesh = capsuleMesh;
+capsuleMesh.add(camera);
 
 
 
@@ -107,6 +138,7 @@
       //human
 	 
 
+        
     
 
 
@@ -166,6 +198,7 @@
 	  {
 		keyboardEvent = event;
 		pressed = true;
+		
 		
 	  }
 	  function onkeyup(event)
